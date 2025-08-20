@@ -233,6 +233,8 @@
       "https://opswawlszrddaksvazdg.supabase.co",
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9wc3dhd2xzenJkZGFrc3ZhemRnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU2NTMwNDMsImV4cCI6MjA3MTIyOTA0M30.B0YBoG1coP0R3hIbnodBDW8lQQHAmfvUR4fpiQb3_gY"
     );
+
+
   </script>
 </head>
 <body>
@@ -258,9 +260,9 @@
         <div class="pill">📍 장소 <b>안산동산교회 7층 에스더홀</b></div>
       </div>
       <div class="row" style="margin-top:18px">
-        <button class="btn" onclick="go('#signup')">신청하기</button>
-        <button class="btn secondary" onclick="go('#fortune')">오늘의 말씀 뽑기</button>
-        <button class="btn secondary" onclick="go('#lotto')">랜덤 추첨</button>
+        <button class="btn" onclick="go('#signup')">🌱 신청하기</button>
+        <button class="btn secondary" onclick="go('#fortune')">📖오늘의 말씀 뽑기</button>
+        <button class="btn secondary" onclick="go('#lotto')">🎯 랜덤 추첨</button>
       </div>
     </div>
   </section>
@@ -270,6 +272,7 @@
     <div class="card">
       <h2 class="title">참가 신청</h2>
       <p class="subtitle">이름 · MBTI · 기수를 입력해 주세요 (모두 필수)</p>
+      <p></p>
       <div class="grid">
         <input id="in-name" class="input" placeholder="이름" required />
         <input id="in-mbti" class="input" placeholder="MBTI (예: INFP)" required />
@@ -406,6 +409,8 @@
 <div id="toast" class="toast"></div>
 
 <script>
+
+  let attendeeRenderSeq = 0;
   /*** 라우팅 ***/
   function go(hash){ location.hash = hash; renderRoute(); }
   function renderRoute(){
@@ -481,40 +486,58 @@
     return data||[];
   }
   async function renderAttendeeLive(){
+    const mySeq = ++attendeeRenderSeq;        // 이 호출의 시퀀스 번호
     const box = document.getElementById('attendee-live');
     const countEl = document.getElementById('attendee-count');
+
+    // 일단 비워두기 (깜빡임 줄이려면 이 줄은 지워도 됨)
     box.innerHTML = '';
+
+    // 데이터 가져오기
     const list = await fetchAttendees();
 
+    // 내가 최신 호출이 아니면 렌더 중단 (레이스 가드)
+    if (mySeq !== attendeeRenderSeq) return;
+
+    // 정규화 + 중복 제거 (공백/대소문자 차이 제거)
     const seen = new Set();
     const unique = [];
     for (const a of list) {
-      const key = `${(a.name||'').toLowerCase()}|${(a.cohort||'').toLowerCase()}`;
+      const name   = (a.name   || '').trim().toLowerCase();
+      const cohort = (a.cohort || '').trim().toLowerCase();
+      const key = `${name}|${cohort}`;
       if (seen.has(key)) continue;
       seen.add(key);
       unique.push(a);
     }
+
     countEl.textContent = unique.length;
 
-    if(unique.length===0){
+    if (unique.length === 0) {
       box.innerHTML = `<div class="small">아직 신청자가 없어요. 첫 신청을 남겨주세요! 😊</div>`;
       return;
     }
-    for(const a of unique){
+
+    // 렌더링
+    const frag = document.createDocumentFragment();
+    for (const a of unique) {
       const el = document.createElement('div');
       el.className = 'msg';
       const when = (a.created_at ? new Date(a.created_at).toLocaleString('ko-KR') : '');
       el.innerHTML = `
-        <div class="meta">
-          <span class="avatar">👥</span>
-          <b>${escapeHtml(a.name||'익명')}</b>
-          ${a.mbti?`<span class="pill">${escapeHtml(a.mbti)}</span>`:''}
-          ${a.cohort?`<span class="pill">${escapeHtml(a.cohort)}</span>`:''}
-          <span class="small">· ${when}</span>
-        </div>`;
-      box.appendChild(el);
+      <div class="meta">
+        <span class="avatar">👥</span>
+        <b>${escapeHtml((a.name||'익명').trim())}</b>
+        ${a.mbti  ? `<span class="pill">${escapeHtml(a.mbti)}</span>` : ''}
+        ${a.cohort? `<span class="pill">${escapeHtml(a.cohort)}</span>` : ''}
+        <span class="small">· ${when}</span>
+      </div>`;
+      frag.appendChild(el);
     }
+    // 마지막으로 한 번에 붙이기 (중간 깜빡임 감소)
+    box.appendChild(frag);
   }
+
 
   /*** 랜덤 추첨 (본인만 당첨, 타인은 꽝) ***/
   async function pickWinner(){
