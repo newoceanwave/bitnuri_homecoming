@@ -1,15 +1,16 @@
-/*! HTML5 Boilerplate v9.0.1 | MIT License | https://html5boilerplate.com/ */
-
-/* main.css 3.0.0 | MIT License | https://github.com/h5bp/main.css#readme */
 /*
+!*! HTML5 Boilerplate v9.0.1 | MIT License | https://html5boilerplate.com/ *!
+
+!* main.css 3.0.0 | MIT License | https://github.com/h5bp/main.css#readme *!
+!*
  * What follows is the result of much research on cross-browser styling.
  * Credit left inline and big thanks to Nicolas Gallagher, Jonathan Neal,
  * Kroc Camen, and the H5BP dev community and team.
- */
+ *!
 
-/* ==========================================================================
+!* ==========================================================================
    Base styles: opinionated defaults
-   ========================================================================== */
+   ========================================================================== *!
 
 html {
   color: #222;
@@ -17,12 +18,12 @@ html {
   line-height: 1.4;
 }
 
-/*
+!*
  * Remove text-shadow in selection highlight:
  * https://twitter.com/miketaylr/status/12228805301
  *
  * Customize the background color to match your design.
- */
+ *!
 
 ::-moz-selection {
   background: #b3d4fc;
@@ -34,9 +35,9 @@ html {
   text-shadow: none;
 }
 
-/*
+!*
  * A better looking default horizontal rule
- */
+ *!
 
 hr {
   display: block;
@@ -47,11 +48,11 @@ hr {
   padding: 0;
 }
 
-/*
+!*
  * Remove the gap between audio, canvas, iframes,
  * images, videos and the bottom of their containers:
  * https://github.com/h5bp/html5-boilerplate/issues/440
- */
+ *!
 
 audio,
 canvas,
@@ -62,9 +63,9 @@ video {
   vertical-align: middle;
 }
 
-/*
+!*
  * Remove default fieldset styles.
- */
+ *!
 
 fieldset {
   border: 0;
@@ -72,39 +73,39 @@ fieldset {
   padding: 0;
 }
 
-/*
+!*
  * Allow only vertical resizing of textareas.
- */
+ *!
 
 textarea {
   resize: vertical;
 }
 
-/* ==========================================================================
+!* ==========================================================================
    Author's custom styles
-   ========================================================================== */
+   ========================================================================== *!
 
-/* ==========================================================================
+!* ==========================================================================
    Helper classes
-   ========================================================================== */
+   ========================================================================== *!
 
-/*
+!*
  * Hide visually and from screen readers
- */
+ *!
 
 .hidden,
 [hidden] {
   display: none !important;
 }
 
-/*
+!*
  * Hide only visually, but have it available for screen readers:
  * https://snook.ca/archives/html_and_css/hiding-content-for-accessibility
  *
  * 1. For long content, line feeds are not interpreted as spaces and small width
  *    causes content to wrap 1 word per line:
  *    https://medium.com/@jessebeach/beware-smushed-off-screen-accessible-text-5952a4c2cbfe
- */
+ *!
 
 .visually-hidden {
   border: 0;
@@ -116,14 +117,14 @@ textarea {
   position: absolute;
   white-space: nowrap;
   width: 1px;
-  /* 1 */
+  !* 1 *!
 }
 
-/*
+!*
  * Extends the .visually-hidden class to allow the element
  * to be focusable when navigated to via the keyboard:
  * https://www.drupal.org/node/897638
- */
+ *!
 
 .visually-hidden.focusable:active,
 .visually-hidden.focusable:focus {
@@ -136,20 +137,20 @@ textarea {
   width: auto;
 }
 
-/*
+!*
  * Hide visually and from screen readers, but maintain layout
- */
+ *!
 
 .invisible {
   visibility: hidden;
 }
 
-/*
+!*
  * Clearfix: contain floats
  *
  * The use of `table` rather than `block` is only necessary if using
  * `::before` to contain the top-margins of child elements.
- */
+ *!
 
 .clearfix::before,
 .clearfix::after {
@@ -161,28 +162,28 @@ textarea {
   clear: both;
 }
 
-/* ==========================================================================
+!* ==========================================================================
    EXAMPLE Media Queries for Responsive Design.
    These examples override the primary ('mobile first') styles.
    Modify as content requires.
-   ========================================================================== */
+   ========================================================================== *!
 
 @media only screen and (min-width: 35em) {
-  /* Style adjustments for viewports that meet the condition */
+  !* Style adjustments for viewports that meet the condition *!
 }
 
 @media print,
   (-webkit-min-device-pixel-ratio: 1.25),
   (min-resolution: 1.25dppx),
   (min-resolution: 120dpi) {
-  /* Style adjustments for high resolution devices */
+  !* Style adjustments for high resolution devices *!
 }
 
-/* ==========================================================================
+!* ==========================================================================
    Print styles.
    Inlined to avoid the additional HTTP request:
    https://www.phpied.com/delay-loading-your-print-css/
-   ========================================================================== */
+   ========================================================================== *!
 
 @media print {
   *,
@@ -190,7 +191,7 @@ textarea {
   *::after {
     background: #fff !important;
     color: #000 !important;
-    /* Black prints faster */
+    !* Black prints faster *!
     box-shadow: none !important;
     text-shadow: none !important;
   }
@@ -208,10 +209,10 @@ textarea {
     content: " (" attr(title) ")";
   }
 
-  /*
+  !*
    * Don't show links that are fragment identifiers,
    * or use the `javascript:` pseudo protocol
-   */
+   *!
   a[href^="#"]::after,
   a[href^="javascript:"]::after {
     content: "";
@@ -245,3 +246,73 @@ textarea {
   }
 }
 
+*/
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f7f9fc;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+header {
+  background: #264e36;
+  color: white;
+  padding: 1rem;
+  text-align: center;
+}
+
+main {
+  flex: 1;
+  padding: 2rem;
+}
+
+.apply-section, .list-section {
+  margin-bottom: 2rem;
+}
+
+form {
+  display: flex;
+  gap: 1rem;
+}
+
+form input {
+  flex: 1;
+  padding: 0.5rem;
+}
+
+form button {
+  padding: 0.5rem 1rem;
+  background: #264e36;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+form button:hover {
+  background: #1e3e2b;
+}
+
+footer {
+  background: #264e36;
+  color: white;
+  text-align: center;
+  padding: 1rem;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+ul li {
+  padding: 0.5rem;
+  border-bottom: 1px solid #ddd;
+}
