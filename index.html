@@ -75,6 +75,17 @@
     }
     /* Twemoji 이미지 정렬 */
     img.emoji{height:1em;width:1em;vertical-align:-0.1em}
+
+    /* 줄바꿈 방지: pill/배지/버튼/작은 배지 전부 한 줄 고정 */
+    .pill,
+    .badge,
+    .nav .btn,
+    .seg button,
+    .msg .meta .pill,
+    .nobr { white-space: nowrap; }
+
+    /* 한국어 단어 단위로만 줄바꿈 (임의 글자 단위 줄바꿈 방지) */
+    body, .btn, .pill { word-break: keep-all; }
   </style>
 
   <!-- Supabase SDK -->
