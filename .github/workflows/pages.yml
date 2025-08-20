@@ -1,0 +1,72 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (no submodules)
+        uses: actions/checkout@v4
+        with:
+          submodules: false     # ✅ .gitmodules가 있어도 서브모듈 절대 불러오지 않음
+          fetch-depth: 0
+
+      # ▶ 빌드가 필요 없으면 아래 Node 단계는 자동으로 "스킵"됩니다.
+      - name: Setup Node (if needed)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install & Build (auto-detect)
+        run: |
+          set -e
+          # package.json에 build 스크립트가 있을 때만 빌드 수행
+          if [ -f package.json ] && npm pkg get scripts.build >/dev/null 2>&1; then
+            echo "Build script detected → npm ci && npm run build"
+            npm ci
+            npm run build
+          else
+            echo "No build script → use repo root as site"
+          fi
+
+      - name: Prepare artifact
+        run: |
+          set -e
+          mkdir -p _site
+          if [ -d dist ]; then
+            cp -R dist/* _site/
+          else
+            # dist가 없으면 레포 루트를 그대로 올림 (숨김/불필요 폴더 제외)
+            shopt -s dotglob extglob
+            cp -R !(._site|.git|.github|node_modules) _site/ 2>/dev/null || true
+          fi
+          touch _site/.nojekyll
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
