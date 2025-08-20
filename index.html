@@ -5,15 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>놀러와요 빛누리마을 · 홈커밍</title>
 
-  <!-- A. 본문 글꼴 통일: Noto Sans KR -->
+  <!-- 본문 폰트 -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;800&display=swap" rel="stylesheet">
 
-  <!-- B. 외부 스타일 (font-smoothing 등 포함) -->
-  <link rel="stylesheet" href="css/style.css">
-
-  <!-- C. 페이지 자체 스타일(기존 것 유지) -->
   <style>
     :root{
       --bg:#F5F9F2; --primary:#4CAF88; --primary-600:#3C8F72; --accent:#FFD782;
@@ -23,69 +19,89 @@
     }
     *{box-sizing:border-box}
     html,body{
-      margin:0;background:var(--bg);color:var(--ink);
+      margin:0;
+      background:transparent;         /* 배경 레이어가 뒤에서 보이도록 */
+      color:var(--ink);
       font-family:"Noto Sans KR", system-ui, -apple-system, "Apple SD Gothic Neo", Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+      word-break: keep-all;
     }
     a,button,input,select,textarea{font:inherit}
-    .container{max-width:720px;margin:0 auto;padding:20px 20px 64px}
+
+    /* 컨텐츠는 배경보다 위로 */
+    .container{
+      max-width:720px; margin:0 auto;
+      /* 하단 네비가 투명이라서 겹치지 않도록 여유 */
+      padding: 20px 20px calc(96px + env(safe-area-inset-bottom));
+      position:relative; z-index:1;
+    }
+
     .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px}
     .title{font-weight:800;line-height:1.15;margin:0 0 8px}
     .subtitle{margin:0;color:var(--muted)}
-    .btn{display:inline-flex;align-items:center;gap:8px;border:none;border-radius:12px;padding:12px 16px;background:var(--primary);color:#fff;cursor:pointer}
+    .btn{display:inline-flex;align-items:center;gap:8px;border:none;border-radius:12px;padding:12px 16px;background:var(--primary);color:#fff;cursor:pointer;white-space:nowrap}
     .btn:active{transform:translateY(1px)}
     .btn.secondary{background:#fff;color:var(--primary);border:1px solid var(--primary)}
     .btn.ghost{background:transparent;color:var(--primary);border:1px dashed var(--primary)}
     .grid{display:grid;gap:16px}
     .row{display:flex;gap:12px;flex-wrap:wrap}
     .input{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:#fff}
-    .badge{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:var(--accent);font-weight:700}
-    .nav{position:sticky;bottom:0;left:0;right:0;background:rgba(245,249,242,.92);backdrop-filter: blur(6px);border-top:1px solid var(--line);z-index:20}
-    .nav .bar{max-width:720px;margin:0 auto;display:flex;gap:8px;padding:10px}
+    .badge{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:var(--accent);font-weight:700;white-space:nowrap}
+
+    /* 하단 네비: 완전 투명 + 경계/블러 제거 */
+    .nav{
+      position: sticky;
+      bottom: 0; left: 0; right: 0;
+      background: transparent !important;
+      border-top: none !important;
+      backdrop-filter: none !important;
+      box-shadow: none !important;
+      z-index: 20;
+    }
+    /* iOS 홈 인디케이터 여유 포함 */
+    .nav .bar{
+      max-width: 720px; margin: 0 auto;
+      display: flex; gap: 8px;
+      padding: 10px;
+      padding-bottom: calc(10px + env(safe-area-inset-bottom));
+    }
     .nav .bar .btn{flex:1;justify-content:center}
-    .pill{background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 12px;color:#fff;display:inline-flex;gap:8px;align-items:center}
-    .pill{color:var(--muted)}
+
+    .pill{background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 12px;color:var(--muted);display:inline-flex;gap:8px;align-items:center;white-space:nowrap}
     .hidden{display:none!important}
     .center{text-align:center}
-    .hero{
-      background:linear-gradient(180deg,#E9F6EE, #FDFBF5);
-      border-radius:24px; padding:28px; border:1px solid var(--line); box-shadow:var(--shadow)
-    }
+    .hero{background:linear-gradient(180deg,#E9F6EE,#FDFBF5);border-radius:24px;padding:28px;border:1px solid var(--line);box-shadow:var(--shadow)}
     .hero h1{font-size:28px;margin:0 0 8px}
-    .hero h1 .emoji{font-size:32px}
     .hero p{margin:8px 0}
-    .stamp{
-      display:inline-flex;align-items:center;gap:8px;
-      background:#fff;border:2px dashed var(--primary-600);color:var(--primary-600);
-      border-radius:14px;padding:8px 12px;font-weight:800
-    }
+    .stamp{display:inline-flex;align-items:center;gap:8px;background:#fff;border:2px dashed var(--primary-600);color:var(--primary-600);border-radius:14px;padding:8px 12px;font-weight:800}
     .list{display:grid;gap:12px}
     .msg{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}
     .msg .meta{font-size:12px;color:var(--muted);display:flex;gap:8px;align-items:center;margin-bottom:6px}
     .msg .text{white-space:pre-wrap}
     .avatar{width:36px;height:36px;border-radius:50%;display:inline-grid;place-items:center;border:1px solid var(--line);background:#fff}
-    .toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#111;color:#fff;padding:10px 14px;border-radius:10px;opacity:0;pointer-events:none;transition:.2s}
+    .toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#111;color:#fff;padding:10px 14px;border-radius:10px;opacity:0;pointer-events:none;transition:.2s;z-index:30}
     .toast.show{opacity:1}
     .small{font-size:12px;color:var(--muted)}
-    /* 항상 하단 고정 푸터 */
+
+    /* 일반 푸터(맨 아래에서만 보임) */
     .site-footer{
-      position:fixed;left:0;right:0;bottom:6px;
       text-align:center;font-size:12px;color:#6B7C6C;
-      background:rgba(245,249,242,.7);backdrop-filter: blur(4px);
-      padding:4px 8px; z-index:5; pointer-events:none;
+      margin:28px 0 48px;background:transparent;
     }
-    /* Twemoji 이미지 정렬 */
-    img.emoji{height:1em;width:1em;vertical-align:-0.1em}
 
-    /* 줄바꿈 방지: pill/배지/버튼/작은 배지 전부 한 줄 고정 */
-    .pill,
-    .badge,
-    .nav .btn,
-    .seg button,
-    .msg .meta .pill,
-    .nobr { white-space: nowrap; }
+    /* 배경 슬라이드 (교차 페이드) - 화면 전체 덮음 */
+    .bg-layer{
+      position:fixed; inset:0;
+      background:#000 center/cover no-repeat;
+      opacity:0; transition:opacity .8s ease;
+      z-index:0; /* 컨텐츠보다 뒤 */
+      filter:saturate(1.05) brightness(1);
+    }
+    .bg-layer.show{ opacity:.22; } /* 필요에 따라 0.18~0.28 조절 */
 
-    /* 한국어 단어 단위로만 줄바꿈 (임의 글자 단위 줄바꿈 방지) */
-    body, .btn, .pill { word-break: keep-all; }
+    @media (max-width:360px){
+      .nav .bar .btn{font-size:14px;padding:10px 12px}
+      .pill{font-size:13px}
+    }
   </style>
 
   <!-- Supabase SDK -->
@@ -98,6 +114,11 @@
   </script>
 </head>
 <body>
+
+<!-- 배경 두 레이어 -->
+<div id="bgA" class="bg-layer"></div>
+<div id="bgB" class="bg-layer"></div>
+
 <div class="container">
 
   <!-- PAGE 1: 초대장 -->
@@ -107,44 +128,39 @@
         <span class="stamp">🌿 HOMECOMING</span>
         <span class="badge">빛누리마을</span>
       </div>
-      <h1 class="title" style="margin-top:10px">
-        <span class="emoji">🍃</span> 놀러와요 <b>빛누리마을</b>
-      </h1>
+      <h1 class="title" style="margin-top:10px">🍃 놀러와요 <b>빛누리마을</b></h1>
       <p class="subtitle">선배들과 함께 추억하고 노는 홈커밍 데이</p>
       <div class="grid" style="margin-top:16px">
-        <div class="pill">📅 일시 <b>2025.09.07(일) 오후 54시</b></div>
+        <div class="pill">📅 일시 <b>2025.09.07(일) 오후 4시</b></div>
         <div class="pill">👥 참여 대상 <b>빛누리마을 선배님들</b></div>
-        <div class="pill">📍 장소 <b>안산동산교회 1층 사랑1실</b></div>
+        <div class="pill">📍 장소 <b>안산동산교회 7층 에스더홀</b></div>
       </div>
       <div class="row" style="margin-top:18px">
         <button class="btn" onclick="go('#signup')">더 알아보기</button>
         <button class="btn secondary" onclick="go('#fortune')">오늘의 말씀 뽑기</button>
+        <button class="btn secondary" onclick="go('#lotto')">랜덤 추첨</button>
       </div>
     </div>
   </section>
 
-  <!-- PAGE 2: 참가 신청 -->
+  <!-- PAGE 2: 참가 신청 (모두 필수) -->
   <section id="page-signup" class="grid hidden">
     <div class="card">
       <h2 class="title">참가 신청</h2>
-      <p class="subtitle">이름/MBTI/기수를 남겨주세요 🌿</p>
+      <p class="subtitle">이름 · MBTI · 기수를 입력해 주세요 (모두 필수)</p>
       <div class="grid">
-        <input id="in-name" class="input" placeholder="이름 (필수)" />
-        <input id="in-mbti" class="input" placeholder="MBTI (선택, 예: INFP)" />
-        <input id="in-cohort" class="input" placeholder="기수 (선택, 예: 30기)" />
+        <input id="in-name" class="input" placeholder="이름" required />
+        <input id="in-mbti" class="input" placeholder="MBTI (예: INFP)" required />
+        <input id="in-cohort" class="input" placeholder="기수 (예: 35기)" required />
         <button class="btn" onclick="submitSignup()">참가 신청하기</button>
       </div>
     </div>
 
-    <div class="card">
-      <h3 class="title" style="font-size:18px">신청자 미리보기(내 브라우저)</h3>
-      <div id="attendee-preview" class="list"></div>
-    </div>
-
+    <!-- 실시간 신청자 목록 -->
     <div class="card">
       <div class="row" style="justify-content:space-between;align-items:center">
         <h3 class="title" style="font-size:18px;margin:0">실시간 신청자 목록</h3>
-        <div class="pill">총 <b id="attendee-count">0</b>명</div>
+        <div class="pill">총 <b id="attendee-count">0</b> 명</div>
       </div>
       <div id="attendee-live" class="list" style="margin-top:12px"></div>
     </div>
@@ -158,7 +174,7 @@
     </div>
   </section>
 
-  <!-- PAGE 3: 랜덤 성경구절 -->
+  <!-- PAGE 3: 랜덤 성경구절 + 추천 등록 -->
   <section id="page-fortune" class="grid hidden">
     <div class="card center">
       <div style="font-size:44px">🍀</div>
@@ -171,9 +187,22 @@
       <div id="verse-card" class="card hidden" style="margin-top:14px;background:#fffefa">
         <div id="verse-text" style="font-size:18px;line-height:1.6;white-space:pre-wrap"></div>
         <div id="verse-ref" class="small" style="margin-top:8px"></div>
+        <div id="verse-who" class="small hidden" style="margin-top:4px;color:#5b6d5c"></div>
       </div>
-      <div class="row" style="justify-content:center;margin-top:10px">
-        <button class="btn secondary" onclick="go('#board')">마을 광장 가기</button>
+    </div>
+
+    <!-- 추천 등록 폼 -->
+    <div class="card">
+      <h3 class="title" style="font-size:18px">빛누리에게 추천해주고 싶은 말씀</h3>
+      <p class="small" style="margin:0 0 6px">구절(예: 요한복음 3:16)과 본문을 적어주세요. (이름/기수는 당첨 시 표시돼요)</p>
+      <div class="grid">
+        <div class="row">
+          <input id="rec-name" class="input" placeholder="이름 (필수)" />
+          <input id="rec-cohort" class="input" placeholder="기수 (예: 35기, 필수)" />
+        </div>
+        <input id="rec-ref" class="input" placeholder="말씀 구절 (예: 요한복음 3:16)" />
+        <textarea id="rec-text" class="input" rows="3" placeholder="말씀 본문을 입력해 주세요"></textarea>
+        <button class="btn" onclick="submitVerse()">추천 등록</button>
       </div>
     </div>
 
@@ -186,7 +215,7 @@
     </div>
   </section>
 
-  <!-- PAGE 4: 메시지 보드 -->
+  <!-- PAGE 4: 마을 메시지 보드 -->
   <section id="page-board" class="grid hidden">
     <div class="card">
       <div class="row" style="justify-content:space-between;align-items:center">
@@ -223,77 +252,109 @@
     </div>
   </section>
 
-</div>
+  <!-- PAGE 5: 랜덤 추첨 -->
+  <section id="page-lotto" class="grid hidden">
+    <div class="card center">
+      <div style="font-size:44px">🎉</div>
+      <h2 class="title">랜덤 추첨</h2>
+      <p class="subtitle">모두가 보는 화면에서 “하나 둘 셋!” 하고 추첨 버튼을 눌러요</p>
+      <div class="row" style="justify-content:center;margin-top:8px">
+        <button class="btn" onclick="pickWinner()">추첨하기</button>
+      </div>
+      <div id="winner-card" class="card hidden" style="margin-top:14px;background:#f7ffef">
+        <div id="winner-text" style="font-size:20px;line-height:1.6;white-space:pre-wrap"></div>
+      </div>
+    </div>
 
-<!-- 항상 하단 고정 푸터 -->
-<div class="site-footer">만든이 : 35기 이서현 &gt;_&lt;</div>
+    <div class="nav">
+      <div class="bar">
+        <button class="btn secondary" onclick="go('#invite')">초대장</button>
+        <button class="btn secondary" onclick="go('#signup')">신청</button>
+        <button class="btn" onclick="go('#fortune')">말씀 뽑기</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 일반 푸터: 페이지 맨 아래에서만 보임 -->
+  <div class="site-footer">만든이 : 35기 이서현 &gt;_&lt;</div>
+
+</div> <!-- /.container -->
 
 <!-- Toast -->
 <div id="toast" class="toast"></div>
 
-<!-- 기존 인라인 스크립트 (그대로 유지) -->
 <script>
-  /*** 로컬 상태 ***/
-  const KEYS = { attendee:'hc_attendee' };
-
   /*** 라우팅 ***/
   function go(hash){ location.hash = hash; renderRoute(); }
   function renderRoute(){
     const route = location.hash || '#invite';
-    for(const id of ['invite','signup','fortune','board']){
+    for(const id of ['invite','signup','fortune','board','lotto']){
       document.getElementById('page-'+id).classList.toggle('hidden', '#'+id !== route);
     }
-    if(route==='#signup'){ renderAttendeePreview(); renderAttendeeLive(); }
+    if(route==='#signup'){ renderAttendeeLive(); }
     if(route==='#board'){ renderBoard(); }
   }
   window.addEventListener('hashchange', renderRoute);
-  document.addEventListener('DOMContentLoaded', ()=>{ renderRoute(); if(window.twemoji) twemoji.parse(document.body,{folder:'svg',ext:'.svg'}); });
 
-  /*** 참가 신청: 로컬 + Supabase 저장 ***/
+  /*** 배경 슬라이드 ***/
+  const BG_IMAGES = [
+    'img/bg1.jpg','img/bg2.jpg','img/bg3.jpg','img/bg4.jpg',
+    'img/bg5.jpg','img/bg6.jpg','img/bg7.jpg','img/bg8.jpg'
+  ];
+  let bgIdx = -1, showingA = true;
+  function setBg(el, url){ el.style.backgroundImage = `url('${url}')`; }
+  function cycleBg(first=false){
+    bgIdx = (bgIdx+1)%BG_IMAGES.length;
+    const nextUrl = BG_IMAGES[bgIdx];
+    const A = document.getElementById('bgA');
+    const B = document.getElementById('bgB');
+    const show = showingA ? A : B;
+    const hide = showingA ? B : A;
+    setBg(hide, nextUrl);
+    hide.classList.add('show');
+    show.classList.remove('show');
+    showingA = !showingA;
+    if(first){ A.classList.add('show'); }
+  }
+
+  /*** 참가 신청 (모두 필수 + 중복 방지) ***/
   async function submitSignup(){
-    const name = document.getElementById('in-name').value.trim();
-    const mbti = document.getElementById('in-mbti').value.trim().toUpperCase();
+    const name   = document.getElementById('in-name').value.trim();
+    const mbti   = document.getElementById('in-mbti').value.trim().toUpperCase();
     const cohort = document.getElementById('in-cohort').value.trim();
-    if(!name){ toast('이름은 필수입니다'); return; }
+    if(!name || !mbti || !cohort){ toast('모든 항목을 입력해 주세요'); return; }
 
-    const attendee = { name, mbti, cohort, ts: Date.now() };
-    localStorage.setItem(KEYS.attendee, JSON.stringify(attendee));
-    renderAttendeePreview();
+    const { data: exists, error: selErr } = await supabase
+      .from('attendees').select('*')
+      .eq('name', name).eq('cohort', cohort)
+      .order('created_at', { ascending:false }).limit(1);
+    if (selErr) { console.error(selErr); toast('신청 확인 중 오류'); return; }
 
-    const { error } = await supabase.from('attendees').insert([{ name, mbti, cohort }]);
-    if(error){ console.error(error); toast('신청 저장 실패(서버)'); return; }
+    if (exists && exists.length > 0) {
+      const { error: updErr } = await supabase
+        .from('attendees').update({ mbti })
+        .eq('name', name).eq('cohort', cohort);
+      if (updErr) { console.error(updErr); toast('수정 실패'); return; }
+      toast('신청 정보가 업데이트되었어요!');
+    } else {
+      const { error: insErr } = await supabase
+        .from('attendees').insert([{ name, mbti, cohort }]);
+      if (insErr) { console.error(insErr); toast('신청 저장 실패'); return; }
+      toast('신청 완료!');
+    }
 
-    toast('신청 완료!');
+    // 로컬 저장(추첨 시 본인 판별용)
+    localStorage.setItem('hc_attendee', JSON.stringify({ name, mbti, cohort }));
+
     renderAttendeeLive();
     go('#fortune');
   }
 
-  function renderAttendeePreview(){
-    const box = document.getElementById('attendee-preview');
-    box.innerHTML = '';
-    const raw = localStorage.getItem(KEYS.attendee);
-    if(!raw){ box.innerHTML = `<div class="small">아직 신청 정보가 없어요.</div>`; return; }
-    const a = JSON.parse(raw);
-    const el = document.createElement('div');
-    el.className = 'msg';
-    el.innerHTML = `
-      <div class="meta">
-        <span class="avatar">🌿</span>
-        <b>${escapeHtml(a.name)}</b>
-        <span class="pill">${a.mbti ? a.mbti : 'MBTI 미입력'}</span>
-        <span class="pill">${a.cohort ? a.cohort : '기수 미입력'}</span>
-      </div>
-      <div class="text">홈커밍에 참여합니다! 🌿</div>`;
-    box.appendChild(el);
-  }
-
-  /*** 실시간 신청자 목록 ***/
+  /*** 실시간 신청자 목록 (중복 제거 표시) ***/
   async function fetchAttendees(){
     const { data, error } = await supabase
-      .from('attendees')
-      .select('*')
-      .order('created_at', { ascending:false })
-      .limit(200);
+      .from('attendees').select('*')
+      .order('created_at',{ascending:false}).limit(500);
     if(error){ console.error(error); toast('신청자 불러오기 오류'); return []; }
     return data||[];
   }
@@ -302,9 +363,22 @@
     const countEl = document.getElementById('attendee-count');
     box.innerHTML = '';
     const list = await fetchAttendees();
-    countEl.textContent = list.length;
-    if(list.length===0){ box.innerHTML = `<div class="small">아직 신청자가 없어요. 첫 신청을 남겨주세요! 😊</div>`; return; }
-    for(const a of list){
+
+    const seen = new Set();
+    const unique = [];
+    for (const a of list) {
+      const key = `${(a.name||'').toLowerCase()}|${(a.cohort||'').toLowerCase()}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      unique.push(a);
+    }
+    countEl.textContent = unique.length;
+
+    if(unique.length===0){
+      box.innerHTML = `<div class="small">아직 신청자가 없어요. 첫 신청을 남겨주세요! 😊</div>`;
+      return;
+    }
+    for(const a of unique){
       const el = document.createElement('div');
       el.className = 'msg';
       const when = (a.created_at ? new Date(a.created_at).toLocaleString('ko-KR') : '');
@@ -320,8 +394,65 @@
     }
   }
 
-  /*** 랜덤 성경구절 ***/
-  const VERSES = [
+  /*** 랜덤 추첨 (본인만 당첨, 타인은 꽝) ***/
+  async function pickWinner(){
+    const box = document.getElementById('winner-card');
+    const out = document.getElementById('winner-text');
+    box.classList.remove('hidden');
+    out.textContent = '3...'; await new Promise(r=>setTimeout(r, 500));
+    out.textContent = '2...'; await new Promise(r=>setTimeout(r, 500));
+    out.textContent = '1...'; await new Promise(r=>setTimeout(r, 500));
+
+    // 최근 10초 내 추첨 결과가 있는지 확인
+    const sinceISO = new Date(Date.now()-10_000).toISOString();
+    let { data: recent, error: rErr } = await supabase
+      .from('draws').select('*')
+      .gte('created_at', sinceISO)
+      .order('created_at', { ascending:false })
+      .limit(1);
+    if (rErr) { console.error(rErr); toast('추첨 확인 실패'); return; }
+
+    let draw = recent && recent[0];
+
+    if (!draw) {
+      // 없다면 이번 라운드 내가 생성
+      const list = await fetchAttendees();
+      if (list.length===0){ out.textContent='신청자가 없습니다'; return; }
+
+      const seen = new Set(); const unique = [];
+      for (const a of list) {
+        const key = `${(a.name||'').toLowerCase()}|${(a.cohort||'').toLowerCase()}`;
+        if (seen.has(key)) continue;
+        seen.add(key); unique.push(a);
+      }
+      const w = unique[Math.floor(Math.random()*unique.length)];
+
+      const { data: created, error: cErr } = await supabase
+        .from('draws')
+        .insert([{ winner_name: w.name, winner_mbti: w.mbti||'', winner_cohort: w.cohort||'' }])
+        .select().single();
+      if (cErr) { console.error(cErr); toast('추첨 생성 실패'); return; }
+      draw = created;
+    }
+
+    // 본인 판별
+    const meRaw = localStorage.getItem('hc_attendee');
+    const me = meRaw ? JSON.parse(meRaw) : null;
+
+    const winText  = `🎉 당첨! 🎉\n\n이름: ${draw.winner_name}\nMBTI: ${draw.winner_mbti || '-'}\n기수: ${draw.winner_cohort || '-'}`;
+    const loseText = `꽝! 다음 기회~`;
+
+    if (me && me.name && me.cohort &&
+      me.name === draw.winner_name &&
+      me.cohort === draw.winner_cohort) {
+      out.textContent = winText; toast('축하합니다!');
+    } else {
+      out.textContent = loseText;
+    }
+  }
+
+  /*** 랜덤 성경구절 (기본 + 추천) ***/
+  const VERSES_BASE = [
     {ref:'시편 23:1', text:'여호와는 나의 목자시니 내게 부족함이 없으리로다'},
     {ref:'시편 46:1', text:'하나님은 우리의 피난처시요 힘이시니 환난 중에 만날 큰 도움이시라'},
     {ref:'잠언 3:5', text:'너는 마음을 다하여 여호와를 신뢰하고 네 명철을 의지하지 말라'},
@@ -331,24 +462,30 @@
     {ref:'마태복음 28:20', text:'내가 세상 끝날까지 너희와 항상 함께 있으리라'},
     {ref:'요한복음 3:16', text:'하나님이 세상을 이처럼 사랑하사 독생자를 주셨으니 이는 그를 믿는 자마다 멸망하지 않고 영생을 얻게 하려 하심이라'},
     {ref:'로마서 8:28', text:'하나님을 사랑하는 자들에게는 모든 것이 합력하여 선을 이루느니라'},
-    {ref:'빌립보서 4:13', text:'내게 능력 주시는 자 안에서 내가 모든 것을 할 수 있느니라'},
-    {ref:'고린도전서 13:4-7', text:'사랑은 오래 참고 사랑은 온유하며 시기하지 아니하며 자랑하지 아니하며 교만하지 아니하며 무례히 행하지 아니하며 자기의 유익을 구하지 아니하며 성내지 아니하며 악한 것을 생각하지 아니하며 불의를 기뻐하지 아니하고 진리와 함께 기뻐하고 모든 것을 참으며 모든 것을 믿으며 모든 것을 바라며 모든 것을 견디느니라'},
-    {ref:'시편 119:105', text:'주의 말씀은 내 발의 등불이요 내 길의 빛이니이다'},
-    {ref:'로마서 15:13', text:'소망의 하나님이 모든 기쁨과 평강을 믿음 안에서 너희에게 충만하게 하시기를 원하노니 이는 성령의 능력으로 소망이 넘치게 하려 함이라'},
-    {ref:'시편 37:4', text:'여호와를 기뻐하라 그가 네 마음의 소원을 이루어 주시리로다'},
-    {ref:'이사야 40:31', text:'오직 여호와를 앙망하는 자는 새 힘을 얻으리니 독수리가 날개치며 올라감 같을 것이요 달음에 곤비하지 아니하며 걸어가도 피곤하지 아니하리로다'},
-    {ref:'시편 121:1-2', text:'내가 산을 향하여 눈을 들리라 나의 도움이 어디서 올까 나의 도움은 천지를 지으신 여호와에게서 오리로다'},
-    {ref:'요한복음 14:27', text:'평안을 너희에게 끼치노니 곧 나의 평안을 너희에게 주노라 내가 너희에게 주는 것은 세상이 주는 것과 같지 아니하니라 너희는 마음에 근심하지도 말고 두려워하지도 말라'},
-    {ref:'시편 34:8', text:'여호와의 선하심을 맛보아 알지어다 그에게 피하는 자는 복이 있도다'},
-    {ref:'빌립보서 4:6-7', text:'아무것도 염려하지 말고 오직 모든 일에 기도와 간구로 너희 구할 것을 감사함으로 하나님께 아뢰라 그리하면 모든 지각에 뛰어난 하나님의 평강이 그리스도 예수 안에서 너희 마음과 생각을 지키시리라'},
-    {ref:'시편 55:22', text:'네 짐을 여호와께 맡기라 그가 너를 붙드시고 의인 자가 결코 요동하지 않게 하지 아니하시리로다'},
-    {ref:'이사야 43:2', text:'네가 물가운데로 지날 때에 내가 너와 함께 할 것이라 강을 건널 때에 물이 너를 침몰하지 못할 것이요 불가운데로 지날 때에 타지도 아니할 것이요 불꽃이 너를 사르지도 못하리니'}
+    {ref:'빌립보서 4:13', text:'내게 능력 주시는 자 안에서 내가 모든 것을 할 수 있느니라'}
   ];
-
-  function drawVerse(){
-    const v=VERSES[Math.floor(Math.random()*VERSES.length)];
-    document.getElementById('verse-text').textContent=v.text;
-    document.getElementById('verse-ref').textContent='— '+v.ref;
+  async function fetchVerses(){
+    const { data, error } = await supabase.from('verses').select('*').order('created_at',{ascending:false}).limit(500);
+    if(error){ console.error(error); return []; }
+    return data||[];
+  }
+  async function drawVerse(){
+    const extra = await fetchVerses();
+    const pool = [
+      ...VERSES_BASE.map(v=>({ ...v, who:null })),
+      ...extra.map(v=>({ ref:v.ref, text:v.text, who:{name:v.name, cohort:v.cohort} }))
+    ];
+    if(pool.length===0){ toast('말씀 풀이 없습니다'); return; }
+    const v = pool[Math.floor(Math.random()*pool.length)];
+    document.getElementById('verse-text').textContent = v.text;
+    document.getElementById('verse-ref').textContent  = '— ' + v.ref;
+    const whoEl = document.getElementById('verse-who');
+    if(v.who && (v.who.name || v.who.cohort)){
+      whoEl.textContent = `추천: ${v.who.name || '익명'}${v.who.cohort ? ' · '+v.who.cohort : ''}`;
+      whoEl.classList.remove('hidden');
+    }else{
+      whoEl.textContent = ''; whoEl.classList.add('hidden');
+    }
     document.getElementById('verse-card').classList.remove('hidden');
     document.getElementById('copyBtn').classList.remove('hidden');
     toast('말씀이 도착했어요 🍃');
@@ -356,7 +493,22 @@
   function copyVerse(){
     const t=document.getElementById('verse-text').textContent.trim();
     const r=document.getElementById('verse-ref').textContent.trim();
-    navigator.clipboard.writeText(`${t}\n${r}`).then(()=>toast('클립보드에 복사됨'));
+    const w=document.getElementById('verse-who').classList.contains('hidden')?'':('\n'+document.getElementById('verse-who').textContent.trim());
+    navigator.clipboard.writeText(`${t}\n${r}${w}`).then(()=>toast('클립보드에 복사됨'));
+  }
+  async function submitVerse(){
+    const name=document.getElementById('rec-name').value.trim();
+    const cohort=document.getElementById('rec-cohort').value.trim();
+    const ref=document.getElementById('rec-ref').value.trim();
+    const text=document.getElementById('rec-text').value.trim();
+    if(!name || !cohort || !ref || !text){ toast('모든 항목을 입력해 주세요'); return; }
+    const { error } = await supabase.from('verses').insert([{ name, cohort, ref, text }]);
+    if(error){ console.error(error); toast('등록 실패'); return; }
+    document.getElementById('rec-name').value='';
+    document.getElementById('rec-cohort').value='';
+    document.getElementById('rec-ref').value='';
+    document.getElementById('rec-text').value='';
+    toast('추천이 등록되었습니다!');
   }
 
   /*** 게시판 ***/
@@ -371,9 +523,7 @@
     const text=textEl.value.trim();
     if(!text){toast('메시지를 입력해 주세요');return;}
     if(text.length>120){toast('120자 이내로 작성해 주세요');return;}
-    const raw=localStorage.getItem(KEYS.attendee);
-    const a=raw?JSON.parse(raw):{name:'익명',mbti:'',cohort:''};
-    const {error}=await supabase.from('messages').insert([{name:a.name||'익명',mbti:a.mbti||'',cohort:a.cohort||'',avatar,text}]);
+    const {error}=await supabase.from('messages').insert([{name:'익명',mbti:'',cohort:'',avatar,text}]);
     if(error){console.error(error);toast('등록 실패');return;}
     textEl.value='';
     renderBoard();
@@ -401,12 +551,20 @@
     }
   }
 
-  /*** 유틸 ***/
+  /*** 유틸 & 초기화 ***/
   function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1600);}
   function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-</script>
 
-<!-- D. 너가 만든 추가 스크립트가 있다면 여기 연결 -->
-<script src="js/app.js"></script>
+  document.addEventListener('DOMContentLoaded', ()=>{
+    renderRoute();
+
+    // 배경 순환 시작 (첫 장 노출 후 8초마다 교체)
+    const A = document.getElementById('bgA');
+    A.style.backgroundImage = `url('${BG_IMAGES[0]}')`;
+    A.classList.add('show');
+    showingA = true; bgIdx = 0;
+    setInterval(()=>cycleBg(), 8000);
+  });
+</script>
 </body>
 </html>
